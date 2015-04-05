@@ -43,8 +43,9 @@ bgcoord = np.argwhere(segimage==0)
 WIN_SIZE = 5
 WINDOW = 2*WIN_SIZE + 1
 
+#%% training set
 outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/'
-target = open(outfolder +'labelfile', 'w')        
+target = open(outfolder +'training', 'w')        
 
 for ii in range(10000):
     
@@ -71,7 +72,35 @@ for ii in range(10000):
 
 target.close()
 
+#%%testing set
 
+outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/'
+target = open(outfolder +'testing', 'w')        
+
+for ii in range(5000):
+    
+    fgc = fgcoord[randrange(0, fgcoord.shape[0]), :]
+    if(fgc[0]>WINDOW and fgc[1]>WINDOW and fgc[0]<orimg.shape[0]-WINDOW and fgc[1]<orimg.shape[1]-WINDOW):
+        savname = 'fg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
+        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
+        cv2.imwrite( outfolder + savname, savimg)
+        target.write(savname) 
+        target.write(" ")
+        target.write("1")
+        target.write("\n")
+        
+        
+    bgc = bgcoord[randrange(0, bgcoord.shape[0]), :]
+    if(bgc[0]>WINDOW and bgc[1]>WINDOW and bgc[0]<orimg.shape[0]-WINDOW and bgc[1]<orimg.shape[1]-WINDOW):
+        savname = 'bg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
+        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
+        cv2.imwrite( outfolder + savname, savimg)
+        target.write(savname) 
+        target.write(" ") 
+        target.write("0")
+        target.write("\n")
+
+target.close()
 
 
 
