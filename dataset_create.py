@@ -35,76 +35,76 @@ from skimage.morphology import watershed
 from random import randrange
 
 #%%
-orimg = cv2.imread('/Users/sajithks/Documents/project_cell_tracking/processed/result_comparisons/tracking/growthrate_track/phase1/img/transformed_rescaled_cropped_img__000000000_150_000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-segimage = cv2.imread('/Users/sajithks/Documents/project_cell_tracking/processed/result_comparisons/tracking/growthrate_track/phase1/Analysis/Segmentation/img/transformed_rescaled_cropped_img__000000000_150_000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread('/Users/sajithks/Documents/project_cell_tracking/processed/result_comparisons/tracking/phaseimage/img/ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+segimage = cv2.imread('/Users/sajithks/Documents/project_cell_tracking/processed/result_comparisons/tracking/phaseimage/Analysis/Segmentation/img/labeled20141021_ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
 fgcoord = np.argwhere(segimage>0)
 bgcoord = np.argwhere(segimage==0)
 
-WIN_SIZE = 5
+WIN_SIZE = 10
 WINDOW = 2*WIN_SIZE + 1
 
-#%% training set
-outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/'
-target = open(outfolder +'training', 'w')        
+#%%
+fgc = []
+for ii in fgcoord:
+    if(ii[0]>WINDOW and ii[1]>WINDOW and ii[0]<orimg.shape[0]-WINDOW and ii[1]<orimg.shape[1]-WINDOW):
+        fgc.append(ii)
+        
+bgc = []
+for ii in bgcoord:
+    if(ii[0]>WINDOW and ii[1]>WINDOW and ii[0]<orimg.shape[0]-WINDOW and ii[1]<orimg.shape[1]-WINDOW):
+        bgc.append(ii)
+#countval = 0
+        
+# training data
+outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/traindata/'
+for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 5000 ))):
+    savname = 'fg_' + np.str(fgc[ii][0]) +'_' + np.str(fgc[ii][1]) + '.png'
+    savimg = orimg[fgc[ii][0] - WIN_SIZE:fgc[ii][0] + WIN_SIZE, fgc[ii][1] - WIN_SIZE:fgc[ii][1] + WIN_SIZE]
+    cv2.imwrite( outfolder + savname, savimg)
+    target = open(outfolder +'training', 'w')        
+    target.write(savname) 
+    target.write(" ")
+    target.write("1")
+    target.write("\n")
+#    countval = countval + 1
 
-for ii in range(10000):
-    
-    fgc = fgcoord[randrange(0, fgcoord.shape[0]), :]
-    if(fgc[0]>WINDOW and fgc[1]>WINDOW and fgc[0]<orimg.shape[0]-WINDOW and fgc[1]<orimg.shape[1]-WINDOW):
-        savname = 'fg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
-        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
-        cv2.imwrite( outfolder + savname, savimg)
-        target.write(savname) 
-        target.write(" ")
-        target.write("1")
-        target.write("\n")
-        
-        
-    bgc = bgcoord[randrange(0, bgcoord.shape[0]), :]
-    if(bgc[0]>WINDOW and bgc[1]>WINDOW and bgc[0]<orimg.shape[0]-WINDOW and bgc[1]<orimg.shape[1]-WINDOW):
-        savname = 'bg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
-        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
-        cv2.imwrite( outfolder + savname, savimg)
-        target.write(savname) 
-        target.write(" ") 
-        target.write("0")
-        target.write("\n")
+    savname = 'bg_' + np.str(bgc[ii][0]) +'_' + np.str(bgc[ii][1]) + '.png'
+    savimg = orimg[(bgc[ii][0] - WIN_SIZE):(bgc[ii][0] + WIN_SIZE), (bgc[ii][1] - WIN_SIZE):(bgc[ii][1] + WIN_SIZE)]
+    cv2.imwrite( outfolder + savname, savimg)
+    target = open(outfolder +'training', 'w')        
+    target.write(savname) 
+    target.write(" ") 
+    target.write("0")
+    target.write("\n")
+#    countval = countval + 1
 
 target.close()
 
-#%%testing set
-
-outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/'
-target = open(outfolder +'testing', 'w')        
-
-for ii in range(5000):
-    
-    fgc = fgcoord[randrange(0, fgcoord.shape[0]), :]
-    if(fgc[0]>WINDOW and fgc[1]>WINDOW and fgc[0]<orimg.shape[0]-WINDOW and fgc[1]<orimg.shape[1]-WINDOW):
-        savname = 'fg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
-        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
-        cv2.imwrite( outfolder + savname, savimg)
-        target.write(savname) 
-        target.write(" ")
-        target.write("1")
-        target.write("\n")
+#%%
         
-        
-    bgc = bgcoord[randrange(0, bgcoord.shape[0]), :]
-    if(bgc[0]>WINDOW and bgc[1]>WINDOW and bgc[0]<orimg.shape[0]-WINDOW and bgc[1]<orimg.shape[1]-WINDOW):
-        savname = 'bg_' + np.str(fgc[0]) +'_' + np.str(fgc[1]) + '.png'
-        savimg = orimg[fgc[0] - WIN_SIZE:fgc[0] + WIN_SIZE, fgc[1] - WIN_SIZE:fgc[1] + WIN_SIZE]
-        cv2.imwrite( outfolder + savname, savimg)
-        target.write(savname) 
-        target.write(" ") 
-        target.write("0")
-        target.write("\n")
+# testing data
+outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/testdata/'
+for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 1024 ))):
+    savname = 'fg_' + np.str(fgc[ii][0]) +'_' + np.str(fgc[ii][1]) + '.png'
+    savimg = orimg[fgc[ii][0] - WIN_SIZE:fgc[ii][0] + WIN_SIZE, fgc[ii][1] - WIN_SIZE:fgc[ii][1] + WIN_SIZE]
+    cv2.imwrite( outfolder + savname, savimg)
+    target = open(outfolder +'testing', 'w')        
+    target.write(savname) 
+    target.write(" ")
+    target.write("1")
+    target.write("\n")
+#    countval = countval + 1
+
+    savname = 'bg_' + np.str(bgc[ii][0]) +'_' + np.str(bgc[ii][1]) + '.png'
+    savimg = orimg[(bgc[ii][0] - WIN_SIZE):(bgc[ii][0] + WIN_SIZE), (bgc[ii][1] - WIN_SIZE):(bgc[ii][1] + WIN_SIZE)]
+    cv2.imwrite( outfolder + savname, savimg)
+    target = open(outfolder +'testing', 'w')        
+    target.write(savname) 
+    target.write(" ") 
+    target.write("0")
+    target.write("\n")
+#    countval = countval + 1
 
 target.close()
-
-
-
-
-
 
 
