@@ -56,12 +56,13 @@ for ii in bgcoord:
 #countval = 0
         
 # training data
+
 outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/traindata/'
+target = open(outfolder +'training', 'w')        
 for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 5000 ))):
     savname = 'fg_' + np.str(fgc[ii][0]) +'_' + np.str(fgc[ii][1]) + '.png'
     savimg = orimg[fgc[ii][0] - WIN_SIZE:fgc[ii][0] + WIN_SIZE, fgc[ii][1] - WIN_SIZE:fgc[ii][1] + WIN_SIZE]
     cv2.imwrite( outfolder + savname, savimg)
-    target = open(outfolder +'training', 'w')        
     target.write(savname) 
     target.write(" ")
     target.write("1")
@@ -71,7 +72,6 @@ for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[
     savname = 'bg_' + np.str(bgc[ii][0]) +'_' + np.str(bgc[ii][1]) + '.png'
     savimg = orimg[(bgc[ii][0] - WIN_SIZE):(bgc[ii][0] + WIN_SIZE), (bgc[ii][1] - WIN_SIZE):(bgc[ii][1] + WIN_SIZE)]
     cv2.imwrite( outfolder + savname, savimg)
-    target = open(outfolder +'training', 'w')        
     target.write(savname) 
     target.write(" ") 
     target.write("0")
@@ -84,11 +84,12 @@ target.close()
         
 # testing data
 outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/testdata/'
+target = open(outfolder +'testing', 'w')        
+
 for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 1024 ))):
     savname = 'fg_' + np.str(fgc[ii][0]) +'_' + np.str(fgc[ii][1]) + '.png'
     savimg = orimg[fgc[ii][0] - WIN_SIZE:fgc[ii][0] + WIN_SIZE, fgc[ii][1] - WIN_SIZE:fgc[ii][1] + WIN_SIZE]
     cv2.imwrite( outfolder + savname, savimg)
-    target = open(outfolder +'testing', 'w')        
     target.write(savname) 
     target.write(" ")
     target.write("1")
@@ -98,7 +99,6 @@ for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[
     savname = 'bg_' + np.str(bgc[ii][0]) +'_' + np.str(bgc[ii][1]) + '.png'
     savimg = orimg[(bgc[ii][0] - WIN_SIZE):(bgc[ii][0] + WIN_SIZE), (bgc[ii][1] - WIN_SIZE):(bgc[ii][1] + WIN_SIZE)]
     cv2.imwrite( outfolder + savname, savimg)
-    target = open(outfolder +'testing', 'w')        
     target.write(savname) 
     target.write(" ") 
     target.write("0")
