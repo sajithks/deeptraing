@@ -59,7 +59,7 @@ for ii in bgcoord:
 
 outfolder = '/Users/sajithks/Documents/caffe_traindata/ecoli/traindata/'
 target = open(outfolder +'training', 'w')        
-for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 5000 ))):
+for ii in np.unique(np.int32(np.linspace(0, min(np.shape(fgc)[0], np.shape(bgc)[0])-1, 50000 ))):
     savname = 'fg_' + np.str(fgc[ii][0]) +'_' + np.str(fgc[ii][1]) + '.png'
     savimg = orimg[fgc[ii][0] - WIN_SIZE:fgc[ii][0] + WIN_SIZE, fgc[ii][1] - WIN_SIZE:fgc[ii][1] + WIN_SIZE]
     cv2.imwrite( outfolder + savname, savimg)
