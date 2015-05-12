@@ -85,7 +85,7 @@ bagc = bagc[0:20000]
         
 # training data
 
-outfolder = '/home/saj/Downloads/caffe-master/examples/ecoli/neutrotraindata/'
+outfolder = '/home/saj/Downloads/caffe-master/examples/neutrophiles/neutrotraindata/'
 strlist = []
 
 #cellregion
@@ -178,7 +178,7 @@ cenc = cenc[0:2000]
         
 # training data
 
-outfolder = '/home/saj/Downloads/caffe-master/examples/ecoli/neutrotestdata/'
+outfolder = '/home/saj/Downloads/caffe-master/examples/neutrophiles/neutrotestdata/'
 strlist = []
 
 #cellregion

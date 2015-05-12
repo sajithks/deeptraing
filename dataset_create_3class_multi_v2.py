@@ -39,15 +39,15 @@ from sklearn import svm
 from multiprocessing import Pool
 
 print 'libraries loaded'
-WIN_SIZE = 30
+WIN_SIZE = 7
 WINDOW = 2*WIN_SIZE + 1
 
 
 #outfolder = '/home/saj/Downloads/caffe-master/examples/ecoli/neutrotraindata/'
 #traindataloc = '/home/saj/Documents/cbalinux/deeplearning/caffe-master/examples/ecoli/neutrotraindata/'
 #testdataloc = '/home/saj/Documents/cbalinux/deeplearning/caffe-master/examples/ecoli/neutrotestdata/'
-traindataloc = '/home/saj/Downloads/caffe-master/examples/ecoli/neutrotraindata/'
-testdataloc = '/home/saj/Downloads/caffe-master/examples/ecoli/neutrotestdata/'
+traindataloc = '/home/saj/Downloads/caffe-master/examples/neutrophiles/neutrotraindata/'
+testdataloc = '/home/saj/Downloads/caffe-master/examples/neutrophiles/neutrotestdata/'
 
 #% training set
 # read file names
@@ -75,13 +75,13 @@ if(os.system('mkdir '+testdataloc) ==0):print 'testdataloc recreated'
 print 'cleared training and testing data '
 #%##############################################################################
 print 'reading training image and label image ...'
-orimg = cv2.imread(rawimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(rawimgfiles[8], cv2.CV_LOAD_IMAGE_UNCHANGED)
 #orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
 orimg = np.float32(orimg)
 orimg = orimg-orimg.min()
 orimg = np.uint8(255*(orimg/orimg.max()))
 
-labelimg = cv2.imread(labelfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
+labelimg = cv2.imread(labelfiles[2], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 print 'read training image and label image '
 
@@ -165,13 +165,13 @@ print 'training images wrote'
 
 #% #################### testing set ########################################
 print 'reading testing images ...'
-orimg = cv2.imread(rawimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(rawimgfiles[9], cv2.CV_LOAD_IMAGE_UNCHANGED)
 #orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
 orimg = np.float32(orimg)
 orimg = orimg-orimg.min()
 orimg = np.uint8(255*(orimg/orimg.max()))
 
-labelimg = cv2.imread(labelfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+labelimg = cv2.imread(labelfiles[3], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 
 bgcoord = np.argwhere(labelimg==3)
@@ -229,11 +229,11 @@ for ii in bagc:
 #labcen, ncc = label(cenimage==1, np.ones((3,3)))
 
 for ii in cenc:
-        savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
-        savname = 'cen_' + np.str(cval) + '_' + np.str(ii[0]) +'_' + np.str(ii[1]) + np.str(ang) +'.png'
-        cv2.imwrite(testdataloc + savname, savimg)
-        strval = testdataloc + savname + " "+ "2"
-        strlist.append(strval)
+    savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
+    savname = 'cen_' + np.str(cval) + '_' + np.str(ii[0]) +'_' + np.str(ii[1]) + np.str(ang) +'.png'
+    cv2.imwrite(testdataloc + savname, savimg)
+    strval = testdataloc + savname + " "+ "2"
+    strlist.append(strval)
 #print time.time() -st
 shuffle(strlist)
 
@@ -249,131 +249,131 @@ print 'wrote testing images'
 ############################# data set creation done ##########################
 #%% training pre built deep network
 
-cmd = "sh examples/ecoli/train_ecoli.sh"
-p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-while True:
-    out = p.stderr.read(1)
-    if out == '' and p.poll() != None:
-        break
-    if out != '':
-        sys.stdout.write(out)
-        sys.stdout.flush()
-p.wait()
-#%% 
-#print 'network training done'
-###############################################################################
-
-
-caffe.set_mode_cpu()
-#net = caffe.Net(caffe_root + 'examples/ecoli/ecolifile2deploy.prototxt',
-#                caffe_root + 'examples/ecoli/file8bit2_iter_10000.caffemodel',
+#cmd = "sh examples/ecoli/train_ecoli.sh"
+#p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#while True:
+#    out = p.stderr.read(1)
+#    if out == '' and p.poll() != None:
+#        break
+#    if out != '':
+#        sys.stdout.write(out)
+#        sys.stdout.flush()
+#p.wait()
+##%% 
+##print 'network training done'
+################################################################################
+#
+#
+#caffe.set_mode_cpu()
+##net = caffe.Net(caffe_root + 'examples/ecoli/ecolifile2deploy.prototxt',
+##                caffe_root + 'examples/ecoli/file8bit2_iter_10000.caffemodel',
+##                caffe.TEST)
+#net = caffe.Net(caffe_root + 'examples/ecoli/neutro3classv3_deploy.prototxt',
+#                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
 #                caffe.TEST)
-net = caffe.Net(caffe_root + 'examples/ecoli/neutro3classv3_deploy.prototxt',
-                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
-                caffe.TEST)
-
-######################## training #######################################
-#%% read images
-print 'loading image and label ...'
-orimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/img/Aligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-#orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0003.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-orimg = np.float32(orimg)
-orimg = orimg-orimg.min()
-orimg = np.uint8(255*(orimg/orimg.max()))
-
-#segimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/seg/labeled20141021_ex_Phase0003.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-segimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/seg/labeledAligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-
-
-labimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/seg/Aligned00003class.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-
-print('image and label loaded')
-#%%
-print 'extracting features ...'
-st = time.time()
-pval = ['conv1', 'conv2', 'conv3']
-c = 0
-featmat = []
-filtermat = []
-for kk in pval:
-    for ii in range(np.shape(net.params[kk][0].data)[0]):
-        for jj in range(np.shape(net.params[kk][0].data[ii])[0]):
-            filt = net.params[kk][0].data[ii][jj]
-#            filtermat.append(net.params['conv1'][0].data[ii][jj])
-            featmat.append(sp.ndimage.convolve(orimg,filt))
-            
-print time.time()-st
-featmat = np.array(featmat)
-print 'features extracted'
-#%%
-print 'training ...'
-feat = []
-lab = []
-
-#for ii in range(10000):
-#    row = random.randint(0,orimg.shape[0]-1)
-#    col = random.randint(0,orimg.shape[1]-1)
-#    feat.append(featmat[:,row,col])
-#    lab.append(labimg[row,col])
-for row in np.int32(np.linspace(0, orimg.shape[0]-1, 100)):
-    for col in np.int32(np.linspace(0, orimg.shape[1]-1, 100)):
-        feat.append(featmat[:, row, col])
-        lab.append(labimg[row, col])
-    
-feat = np.array(feat)
-lab = np.array(lab)
-
-rforest = rf(n_estimators=200)
-
-rforest.fit(feat,lab)
-print 'training done.'
-#%%
-
-#%%
-############################### testing ###############################
-print 'test data loading ...'
-st = time.time()
-inimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/img/Aligned0005.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-#inimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0004.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-#inimg = np.float32(inimg)
-#inimg = inimg-inimg.min()
-#inimg = np.uint8(255*(inimg/inimg.max()))
-
-pval = ['conv1', 'conv2', 'conv3']
-c = 0
-print 'test data loaded'
-
-print 'feature extracting...'
-
-featmat = []
-for kk in pval:
-    for ii in range(np.shape(net.params[kk][0].data)[0]):
-        for jj in range(np.shape(net.params[kk][0].data[ii])[0]):
-            filt = net.params[kk][0].data[ii][jj]     
-            featmat.append(sp.ndimage.convolve(inimg,filt))
-            
-print time.time()-st
-featmat = np.array(featmat)
-print 'feature extraction done'
-#%%
-print 'start classification...'
-st = time.time()
-outimg = np.zeros((inimg.shape[0], inimg.shape[1]))
-#featreshape = featmat.reshape(featmat.shape[0],featmat.shape[1]*featmat.shape[2]).T
-#outimg = rforest.predict(featreshape).reshape(featmat.shape[1],featmat.shape[2])
-
-for ii in range(inimg.shape[1]):
-    print ii
-#    outimg[ii,:] = rforest.predict(featmat[:,ii,:].T)    
-#    outimg[ii,:] = adaboost.predict_proba(featmat[:,ii,:].T)[:,0]
-    outimg[:,ii] =rforest.predict_proba(featmat[:,:,ii].T)[:,2]
-#    outimg[ii,:] = svmclas.predict_proba(featmat[:,ii,:].T)[:,0]
-
-  
-print 'testing time ', time.time() - st
-
-plt.imshow(outimg)
-print 'classification done!'
+#
+######################### training #######################################
+##%% read images
+#print 'loading image and label ...'
+#orimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/img/Aligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+##orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0003.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+#orimg = np.float32(orimg)
+#orimg = orimg-orimg.min()
+#orimg = np.uint8(255*(orimg/orimg.max()))
+#
+##segimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/seg/labeled20141021_ex_Phase0003.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+#segimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/seg/labeledAligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+#
+#
+#labimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/seg/Aligned00003class.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+#
+#print('image and label loaded')
+##%%
+#print 'extracting features ...'
+#st = time.time()
+#pval = ['conv1', 'conv2', 'conv3']
+#c = 0
+#featmat = []
+#filtermat = []
+#for kk in pval:
+#    for ii in range(np.shape(net.params[kk][0].data)[0]):
+#        for jj in range(np.shape(net.params[kk][0].data[ii])[0]):
+#            filt = net.params[kk][0].data[ii][jj]
+##            filtermat.append(net.params['conv1'][0].data[ii][jj])
+#            featmat.append(sp.ndimage.convolve(orimg,filt))
+#            
+#print time.time()-st
+#featmat = np.array(featmat)
+#print 'features extracted'
+##%%
+#print 'training ...'
+#feat = []
+#lab = []
+#
+##for ii in range(10000):
+##    row = random.randint(0,orimg.shape[0]-1)
+##    col = random.randint(0,orimg.shape[1]-1)
+##    feat.append(featmat[:,row,col])
+##    lab.append(labimg[row,col])
+#for row in np.int32(np.linspace(0, orimg.shape[0]-1, 100)):
+#    for col in np.int32(np.linspace(0, orimg.shape[1]-1, 100)):
+#        feat.append(featmat[:, row, col])
+#        lab.append(labimg[row, col])
+#    
+#feat = np.array(feat)
+#lab = np.array(lab)
+#
+#rforest = rf(n_estimators=200)
+#
+#rforest.fit(feat,lab)
+#print 'training done.'
+##%%
+#
+##%%
+################################ testing ###############################
+#print 'test data loading ...'
+#st = time.time()
+#inimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/img/Aligned0005.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+##inimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0004.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+##inimg = np.float32(inimg)
+##inimg = inimg-inimg.min()
+##inimg = np.uint8(255*(inimg/inimg.max()))
+#
+#pval = ['conv1', 'conv2', 'conv3']
+#c = 0
+#print 'test data loaded'
+#
+#print 'feature extracting...'
+#
+#featmat = []
+#for kk in pval:
+#    for ii in range(np.shape(net.params[kk][0].data)[0]):
+#        for jj in range(np.shape(net.params[kk][0].data[ii])[0]):
+#            filt = net.params[kk][0].data[ii][jj]     
+#            featmat.append(sp.ndimage.convolve(inimg,filt))
+#            
+#print time.time()-st
+#featmat = np.array(featmat)
+#print 'feature extraction done'
+##%%
+#print 'start classification...'
+#st = time.time()
+#outimg = np.zeros((inimg.shape[0], inimg.shape[1]))
+##featreshape = featmat.reshape(featmat.shape[0],featmat.shape[1]*featmat.shape[2]).T
+##outimg = rforest.predict(featreshape).reshape(featmat.shape[1],featmat.shape[2])
+#
+#for ii in range(inimg.shape[1]):
+#    print ii
+##    outimg[ii,:] = rforest.predict(featmat[:,ii,:].T)    
+##    outimg[ii,:] = adaboost.predict_proba(featmat[:,ii,:].T)[:,0]
+#    outimg[:,ii] =rforest.predict_proba(featmat[:,:,ii].T)[:,2]
+##    outimg[ii,:] = svmclas.predict_proba(featmat[:,ii,:].T)[:,0]
+#
+#  
+#print 'testing time ', time.time() - st
+#
+#plt.imshow(outimg)
+#print 'classification done!'
 
 
 

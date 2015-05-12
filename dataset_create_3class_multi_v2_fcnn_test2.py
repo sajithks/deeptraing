@@ -80,7 +80,7 @@ def fastMaxpool(inimg):
 ###############################################################################
 
 
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 #net = caffe.Net(caffe_root + 'examples/ecoli/ecolifile2deploy.prototxt',
 #                caffe_root + 'examples/ecoli/file8bit2_iter_10000.caffemodel',
 #                caffe.TEST)
@@ -91,46 +91,46 @@ imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
 outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/'
 inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 
-filecount = 2
-for infile in inputimgfiles[2:]:
+#filecount = 0
+#for infile in inputimgfiles:
 
 
 
-#orimg = caffe.io.load_image(inputimgfiles[1])
-    orimg = caffe.io.load_image(infile)
+orimg = caffe.io.load_image(inputimgfiles[7])
+#orimg = caffe.io.load_image(infile)
+
+outimg = np.zeros((orimg.shape[0],orimg.shape[1],3))
+inimg = np.zeros((3,orimg.shape[0],orimg.shape[1]))
+inimg[0,:,:] = orimg[:,:,0]
+inimg[1,:,:] = orimg[:,:,0]
+inimg[2,:,:] = orimg[:,:,0]
+
+#ii = jj = 100
+#net.predict([orimg[ii-30:ii+30,jj-30:jj+30,:] ])
+
+
+
+outimg = np.float32(outimg)
+#%%
+#a = []
+step = 4
+for ii in np.arange(40,inimg.shape[1]-40,step):
+    st = time.time()
+    a = []
+    count = ii
+    for kk in range(step):
+        for jj in np.arange(40,inimg.shape[2]-40,1):
+            a.append(inimg[:,count-30:count+30,jj-30:jj+30] )
+        count += 1
     
-    outimg = np.zeros((orimg.shape[0],orimg.shape[1],3))
-    inimg = np.zeros((3,orimg.shape[0],orimg.shape[1]))
-    inimg[0,:,:] = orimg[:,:,0]
-    inimg[1,:,:] = orimg[:,:,0]
-    inimg[2,:,:] = orimg[:,:,0]
+    outimg[ii:ii+step, 40:orimg.shape[1]-40,:] = net.forward_all(data=np.array(a))['prob'].reshape((step,np.shape(a)[0]/step,3 ))
+#    outimg[ii, 40:orimg.shape[1]-40,:] = net.predict(np.array(a))
     
-    #ii = jj = 100
-    #net.predict([orimg[ii-30:ii+30,jj-30:jj+30,:] ])
-    
-    
-    
-    outimg = np.float32(outimg)
-    #%%
-    #a = []
-    step = 4
-    for ii in np.arange(40,inimg.shape[1]-40,step):
-        st = time.time()
-        a = []
-        count = ii
-        for kk in range(step):
-            for jj in np.arange(40,inimg.shape[2]-40,1):
-                a.append(inimg[:,count-30:count+30,jj-30:jj+30] )
-            count += 1
-        
-        outimg[ii:ii+step, 40:orimg.shape[1]-40,:] = net.forward_all(data=np.array(a))['prob'].reshape((step,np.shape(a)[0]/step,3 ))
-    #    outimg[ii, 40:orimg.shape[1]-40,:] = net.predict(np.array(a))
-        
-    #        outimg[ii,jj,:] = net.predict([orimg[ii-30:ii+30,jj-30:jj+30,:] ])
-        print ii, '  ', time.time()-st
-    
-#    plt.imshow(outimg)
-    
-    cv2.imwrite(outfolder+np.str(filecount)+'.tif',np.uint8(outimg*255))
-    print np.str(filecount),' classification done!'
-    filecount += 1
+#        outimg[ii,jj,:] = net.predict([orimg[ii-30:ii+30,jj-30:jj+30,:] ])
+    print ii, '  ', time.time()-st
+
+plt.imshow(outimg)
+
+#cv2.imwrite(outfolder+np.str(filecount)+'.tif',np.uint8(outimg*255))
+#print np.str(filecount),' classification done!'
+#filecount += 1

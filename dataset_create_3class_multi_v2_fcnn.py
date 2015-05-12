@@ -75,12 +75,21 @@ def fastMaxpool(inimg):
 
     return(outimg)
 
-#%% 
+def flipFilter(filt):
+    '''
+    flip filter for correlation operation in caffe
+    '''
+    nfilt = np.zeros_like(filt)
+    for ii in range(filt.shape[0]):
+        for jj in range(filt.shape[1]):
+            nfilt[ii,jj,:,:] = np.flipud(np.fliplr(filt[ii,jj,:,:]))
+    return(nfilt)
+#% 
 #print 'network training done'
 ###############################################################################
 
 
-caffe.set_mode_cpu()
+caffe.set_mode_gpu()
 #net = caffe.Net(caffe_root + 'examples/ecoli/ecolifile2deploy.prototxt',
 #                caffe_root + 'examples/ecoli/file8bit2_iter_10000.caffemodel',
 #                caffe.TEST)
@@ -118,29 +127,36 @@ inimg[2,:,:] = orimg
 
 filtname = 'conv3'
 filt = net.params[filtname][0].data
-maxoutl1 = fastMaxpool(fastConvolve(inimg, filt))
+filt = flipFilter(filt)
+bias = net.params[filtname][1].data
+
+maxoutl1 = fastMaxpool(fastConvolve(inimg, filt)+bias)
 
 #%level 2
 
 filtname = 'conv3_level2'
 filt = net.params[filtname][0].data
+filt = flipFilter(filt)
+bias = net.params[filtname][1].data
 maxoutl2 = []
 coutl2 = []
 for ii in range(2):
     for jj in range(2):
-        maxoutl2.append(fastMaxpool(fastConvolve(maxoutl1[:, ii:maxoutl1.shape[1]:2, jj:maxoutl1.shape[2]:2], filt)))
+        maxoutl2.append(fastMaxpool(fastConvolve(maxoutl1[:, ii:maxoutl1.shape[1]:2, jj:maxoutl1.shape[2]:2], filt) +bias))
 
 #level 3
 
 filtname = 'conv3_level3'
 filt = net.params[filtname][0].data
+bias = net.params[filtname][1].data
+filt = flipFilter(filt)
 
 maxoutl3 = []
 coutl3 = []
 for kk in range(np.shape(maxoutl2)[0] ):
     for ii in range(2):
         for jj in range(2):
-            maxoutl3.append( fastMaxpool(fastConvolve(maxoutl2[kk][:, ii:np.shape(maxoutl2)[2]:2, jj:np.shape(maxoutl2)[3]:2 ], filt)))
+            maxoutl3.append( fastMaxpool(fastConvolve(maxoutl2[kk][:, ii:np.shape(maxoutl2)[2]:2, jj:np.shape(maxoutl2)[3]:2 ], filt) +bias ))
 
 #roll out to full size
 dim1 = np.shape(maxoutl3)[1]
@@ -220,29 +236,36 @@ for infile in inputimgfiles:
     
     filtname = 'conv3'
     filt = net.params[filtname][0].data
-    maxoutl1 = fastMaxpool(fastConvolve(inimg, filt))
+    filt = flipFilter(filt)
+    bias = net.params[filtname][1].data
+    
+    maxoutl1 = fastMaxpool(fastConvolve(inimg, filt)+bias)
     
     #%level 2
     
     filtname = 'conv3_level2'
     filt = net.params[filtname][0].data
+    filt = flipFilter(filt)
+    bias = net.params[filtname][1].data
     maxoutl2 = []
     coutl2 = []
     for ii in range(2):
         for jj in range(2):
-            maxoutl2.append(fastMaxpool(fastConvolve(maxoutl1[:, ii:maxoutl1.shape[1]:2, jj:maxoutl1.shape[2]:2], filt)))
+            maxoutl2.append(fastMaxpool(fastConvolve(maxoutl1[:, ii:maxoutl1.shape[1]:2, jj:maxoutl1.shape[2]:2], filt) +bias))
     
     #level 3
     
     filtname = 'conv3_level3'
     filt = net.params[filtname][0].data
+    bias = net.params[filtname][1].data
+    filt = flipFilter(filt)
     
     maxoutl3 = []
     coutl3 = []
     for kk in range(np.shape(maxoutl2)[0] ):
         for ii in range(2):
             for jj in range(2):
-                maxoutl3.append( fastMaxpool(fastConvolve(maxoutl2[kk][:, ii:np.shape(maxoutl2)[2]:2, jj:np.shape(maxoutl2)[3]:2 ], filt)))
+                maxoutl3.append( fastMaxpool(fastConvolve(maxoutl2[kk][:, ii:np.shape(maxoutl2)[2]:2, jj:np.shape(maxoutl2)[3]:2 ], filt) +bias ))
     
     #roll out to full size
     dim1 = np.shape(maxoutl3)[1]
@@ -255,6 +278,8 @@ for infile in inputimgfiles:
             featimg[:, ii:dim2:4, jj:dim3:4] = maxoutl3[ii*2+jj*1]
             
     print 'features extracted'
+            
+#    print 'features extracted'
     #%
     st =time.time()
 #    outimg = np.zeros((featimg.shape[1], featimg.shape[2], 3),dtype= np.float32)
@@ -289,10 +314,10 @@ for infile in inputimgfiles:
     for row in np.arange(6,featimg.shape[1]-6,1):
         print row
         for col in np.arange(6,featimg.shape[2]-6,1):
-            imgseg = featimg[:,row:row+6,col:col+6].T
+            imgseg = featimg[:,row:row+6,col:col+6]
 #            imgseg = featimg[::-1,row:row+6,col:col+6].T
             
-            feat1d = imgseg.reshape(576)
+            feat1d = imgseg.reshape(36)
     #        feat1d = np.zeros(576)
             
 #            cc = 0
@@ -303,7 +328,7 @@ for infile in inputimgfiles:
     #                    feat1d[cc] = imgseg[ii,kk,jj]
     #    #                feat1d = featimg[::-1,row:row+6,col:col+6].reshape(576)
     #                    cc += 1
-            a = np.inner(feat1d,ipfilt)/np.sum(np.inner(feat1d,ipfilt))
+            a = (np.inner(feat1d,ipfilt)+bias)/(np.sum(np.inner(feat1d,ipfilt)) +bias)
             outimg[row,col,:] = np.exp(a)/np.sum(np.exp(a))# softmax
     
 #    plt.imshow(outimg)
