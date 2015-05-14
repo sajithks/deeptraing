@@ -312,17 +312,17 @@ print time.time()-start
 
 
 
-conv_l1 = net.params['conv3'][0].data
-bias_l1 = net.params['conv3'][1].data
-
-conv_l2 = net.params['conv3_level2'][0].data
-bias_l2 = net.params['conv3_level2'][1].data
-
-conv_l3 = net.params['conv3_level3'][0].data
-bias_l3 = net.params['conv3_level3'][1].data
-
-ip1 = net.params['conv3_level3'][0].data
-bias_ip1 = net.params['conv3_level3'][1].data
+#conv_l1 = net.params['conv3'][0].data
+#bias_l1 = net.params['conv3'][1].data
+#
+#conv_l2 = net.params['conv3_level2'][0].data
+#bias_l2 = net.params['conv3_level2'][1].data
+#
+#conv_l3 = net.params['conv3_level3'][0].data
+#bias_l3 = net.params['conv3_level3'][1].data
+#
+#ip1 = net.params['conv3_level3'][0].data
+#bias_ip1 = net.params['conv3_level3'][1].data
 
 
 
