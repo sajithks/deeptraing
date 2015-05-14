@@ -39,7 +39,7 @@ from sklearn import svm
 from multiprocessing import Pool
 
 print 'libraries loaded'
-WIN_SIZE = 7
+WIN_SIZE = 31
 WINDOW = 2*WIN_SIZE + 1
 
 
@@ -75,13 +75,13 @@ if(os.system('mkdir '+testdataloc) ==0):print 'testdataloc recreated'
 print 'cleared training and testing data '
 #%##############################################################################
 print 'reading training image and label image ...'
-orimg = cv2.imread(rawimgfiles[8], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(rawimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
 #orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
 orimg = np.float32(orimg)
 orimg = orimg-orimg.min()
 orimg = np.uint8(255*(orimg/orimg.max()))
 
-labelimg = cv2.imread(labelfiles[2], cv2.CV_LOAD_IMAGE_UNCHANGED)
+labelimg = cv2.imread(labelfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 print 'read training image and label image '
 
@@ -109,9 +109,9 @@ shuffle(bagc)
 shuffle(cenc)
 cellc = cellc[0:5000]
 bagc = bagc[0:5000]
-#cenc = cenc[0:2000]
+#cenc = cenc[0:715]
 
-#%
+#%%
 #st = time.time()
 #countval = 0
         
@@ -165,13 +165,13 @@ print 'training images wrote'
 
 #% #################### testing set ########################################
 print 'reading testing images ...'
-orimg = cv2.imread(rawimgfiles[9], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(rawimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
 #orimg = cv2.imread('/home/saj/Documents/deeptraing-master/data/img/ex_Phase0001.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
 orimg = np.float32(orimg)
 orimg = orimg-orimg.min()
 orimg = np.uint8(255*(orimg/orimg.max()))
 
-labelimg = cv2.imread(labelfiles[3], cv2.CV_LOAD_IMAGE_UNCHANGED)
+labelimg = cv2.imread(labelfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 
 bgcoord = np.argwhere(labelimg==3)
