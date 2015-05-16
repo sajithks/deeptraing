@@ -85,7 +85,7 @@ def distributMatrix(inimg, subimage, stride):
 
     return(inimg)
 
-#%%
+
 def extractFcnnFeature(orimg, caffenet):
     '''
     extractFcnnFeature(orimg, caffenet) --> outfeatimg
@@ -293,50 +293,30 @@ def classifyFcnnFeature(orimg, caffenet):
                 
                 outfeatimg[arrayindex.T[0],arrayindex.T[1],:] = tem
     
-    ip1_filt = caffenet['ip1_filt']
-    ip1_bias = caffenet['ip1_bias']
+    ipfilt = caffenet['ip1_filt']
+    bias = caffenet['ip1_bias']
     
-    ip2_filt = caffenet['ip2_filt']
-    ip2_bias = caffenet['ip2_bias']
-    
-    ip3_filt = caffenet['ip3_filt']
-    ip3_bias = caffenet['ip3_bias']
     #%
     dim = np.shape(maxoutl3)
     
     outimg = []
-    classout = np.zeros((dim[0], dim[1], dim[2], ip3_filt.shape[0], dim[4]-6, dim [5]-6))
+    classout = np.zeros((dim[0], dim[1], dim[2], ipfilt.shape[0], dim[4]-6, dim [5]-6))
     
     for ii in range(np.shape(maxoutl3)[0]):
         for jj in range(np.shape(maxoutl3)[1]):
             for kk in range(np.shape(maxoutl3)[2]):
                 featimg = maxoutl3[ii][jj][kk]
                 rindex = 0
-                print ii,jj,kk
                 for row in np.arange(3, np.shape(featimg)[1]-3, 1):
-                    cindex = 0  
-                    feat1d = []
+                    cindex = 0                
                     for col in np.arange(3,np.shape(featimg)[2]-3, 1):
-                        feat1d.append(featimg[:,row-3:row+3,col-3:col+3].reshape((featimg.shape[0]*36),order='C'))
-                        
-                    inner1 = (np.inner(feat1d,ip1_filt)+ip1_bias)#ip1
-                    inner1 = inner1*(inner1>0)#relu
-                    inner2 = (np.inner(inner1,ip2_filt)+ip2_bias)
-                    inner2 = inner2*(inner2>0)
-                    inner3 = (np.inner(inner2,ip3_filt)+ip3_bias)
-#                        a = (np.inner(feat1d,ip1_filt)+ip1_bias)#/(np.sum(np.inner(feat1d,ipfilt) +bias))            
-                    #softmax    
-                    classout[ii, jj, kk, 0, rindex, :] = np.divide(np.exp(inner3)[:, 0], np.sum(np.exp(inner3), 1) )
-                    classout[ii, jj, kk, 1, rindex, :] = np.divide(np.exp(inner3)[:, 1], np.sum(np.exp(inner3), 1) )
-                    classout[ii, jj, kk, 2, rindex, :] = np.divide(np.exp(inner3)[:, 2], np.sum(np.exp(inner3), 1) )
-                    
-#                        cindex +=1
+                        feat1d = featimg[:,row-3:row+3,col-3:col+3].reshape((featimg.shape[0]*36),order='C')
+                        a = (np.inner(feat1d,ipfilt)+bias)#/(np.sum(np.inner(feat1d,ipfilt) +bias))            
+                        prob = (np.exp(a)/np.sum(np.exp(a))) # softmax
+                        classout[ii, jj, kk, :, rindex, cindex] = prob
+                        cindex +=1
                     rindex += 1
                     
-    
-    
-    
-    
     #%%
                     
     level_mult = 8

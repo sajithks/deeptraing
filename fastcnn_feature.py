@@ -41,27 +41,26 @@ import itertools
 print 'libraries loaded'
 
 
-#%% 
+#%
 
 start = time.time()
 
-netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/'
+netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
 
 
-caffenet = pickle.load( open( netfolder+'neutro_conv_666.p', "rb" ) )
+caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
 
-#%%
+#%
 
 print 'test data loading ...'
 
 imgfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/sampimg/'
-outfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/neural_fcnn_feat/conv_222/'
+outfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/conv_222/'
 
 inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
-count = 0
 #for infile in inputimgfiles:
 
-orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 labelimg = cv2.imread('/Users/sajithks/Documents/deeptraing/data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
@@ -142,45 +141,45 @@ rforest.fit(feat,lab)
 
 
 #%%######################## testing ###########################################
+count = 0
 
-start = time.time()
-testimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+for infile in inputimgfiles:
 
+    start = time.time()
+    testimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
+#    testimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+    
+    featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
+    
+    classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
+    
+    for ii in np.arange(3, featimg.shape[0]-3,1):
+    #    print ii
+        groupfeat = []
+        for jj in np.arange(3, featimg.shape[1]-3,1):
+            
+            feature = featimg[ii-3:ii+3, jj-3:jj+3]
+            feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
+            groupfeat.append(feature1d)
+            
+        classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
+    
+    
+#    plt.imshow(classimg)
+    cv2.imwrite(outfolder+np.str(count)+'.png', np.uint8(classimg*255))
+    count += 1
 
-featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
-
-
-
-classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
-
-
-for ii in np.arange(3, featimg.shape[0]-3,1):
-#    print ii
-    groupfeat = []
-    for jj in np.arange(3, featimg.shape[1]-3,1):
-        
-        feature = featimg[ii-3:ii+3, jj-3:jj+3]
-        feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
-        groupfeat.append(feature1d)
-        
-    classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
-
-
-
-
-plt.imshow(classimg)
-
-
-print time.time()-start
+    print time.time()-start
 
 
 #%%
+
 start = time.time()
 neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
 print time.time()-start
 plt.figure()
 plt.imshow(neuralout)
-#count += 1
+count += 1
 
 
 
