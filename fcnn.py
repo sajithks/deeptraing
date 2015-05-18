@@ -313,25 +313,25 @@ def classifyFcnnFeature(orimg, caffenet):
                 featimg = maxoutl3[ii][jj][kk]
                 rindex = 0
                 print ii,jj,kk
+                feat1d = []
                 for row in np.arange(3, np.shape(featimg)[1]-3, 1):
                     cindex = 0  
-                    feat1d = []
                     for col in np.arange(3,np.shape(featimg)[2]-3, 1):
                         feat1d.append(featimg[:,row-3:row+3,col-3:col+3].reshape((featimg.shape[0]*36),order='C'))
                         
-                    inner1 = (np.inner(feat1d,ip1_filt)+ip1_bias)#ip1
-                    inner1 = inner1*(inner1>0)#relu
-                    inner2 = (np.inner(inner1,ip2_filt)+ip2_bias)
-                    inner2 = inner2*(inner2>0)
-                    inner3 = (np.inner(inner2,ip3_filt)+ip3_bias)
+                inner1 = (np.inner(feat1d,ip1_filt)+ip1_bias)#ip1
+                inner1 = inner1*(inner1>0)#relu
+                inner2 = (np.inner(inner1,ip2_filt)+ip2_bias)
+                inner2 = inner2*(inner2>0)
+                inner3 = (np.inner(inner2,ip3_filt)+ip3_bias)
 #                        a = (np.inner(feat1d,ip1_filt)+ip1_bias)#/(np.sum(np.inner(feat1d,ipfilt) +bias))            
                     #softmax    
-                    classout[ii, jj, kk, 0, rindex, :] = np.divide(np.exp(inner3)[:, 0], np.sum(np.exp(inner3), 1) )
-                    classout[ii, jj, kk, 1, rindex, :] = np.divide(np.exp(inner3)[:, 1], np.sum(np.exp(inner3), 1) )
-                    classout[ii, jj, kk, 2, rindex, :] = np.divide(np.exp(inner3)[:, 2], np.sum(np.exp(inner3), 1) )
+                classout[ii, jj, kk, 0, :, :] = np.divide(np.exp(inner3)[:, 0], np.sum(np.exp(inner3), 1) ).reshape((dim[4]-6, dim [5]-6))
+                classout[ii, jj, kk, 1, :, :] = np.divide(np.exp(inner3)[:, 1], np.sum(np.exp(inner3), 1) ).reshape((dim[4]-6, dim [5]-6))
+                classout[ii, jj, kk, 2, :, :] = np.divide(np.exp(inner3)[:, 2], np.sum(np.exp(inner3), 1) ).reshape((dim[4]-6, dim [5]-6))
                     
 #                        cindex +=1
-                    rindex += 1
+#                rindex += 1
                     
     
     

@@ -179,7 +179,7 @@ neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
 print time.time()-start
 plt.figure()
 plt.imshow(neuralout)
-count += 1
+#count += 1
 
 
 
