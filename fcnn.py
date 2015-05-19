@@ -308,11 +308,12 @@ def classifyFcnnFeature(orimg, caffenet):
     classout = np.zeros((dim[0], dim[1], dim[2], ip3_filt.shape[0], dim[4]-6, dim [5]-6))
     
     for ii in range(np.shape(maxoutl3)[0]):
+        print ii,jj,kk
+
         for jj in range(np.shape(maxoutl3)[1]):
             for kk in range(np.shape(maxoutl3)[2]):
                 featimg = maxoutl3[ii][jj][kk]
                 rindex = 0
-                print ii,jj,kk
                 feat1d = []
                 for row in np.arange(3, np.shape(featimg)[1]-3, 1):
                     cindex = 0  

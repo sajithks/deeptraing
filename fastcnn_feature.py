@@ -45,10 +45,10 @@ print 'libraries loaded'
 
 start = time.time()
 
-netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
+netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2/'
 
 
-caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
+caffenet = pickle.load( open( netfolder+'neutro_conv_333.p', "rb" ) )
 
 #%
 
@@ -58,6 +58,7 @@ imgfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/sampimg/'
 outfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/conv_222/'
 
 inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
+inputimgfiles = inputimgfiles[0:2]
 #for infile in inputimgfiles:
 
 orimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
@@ -116,26 +117,31 @@ for ii in range(np.shape(cellc)[0]):
     feature = featimg[cellc[ii][0]-3:cellc[ii][0]+3, cellc[ii][1]-3:cellc[ii][1]+3]
     feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
     feat.append(feature1d)
-    lab.append(labelimg[cellc[ii][0], cellc[ii][1]])
+#    lab.append(labelimg[cellc[ii][0], cellc[ii][1]])
+    lab.append(1)
 
 for ii in range(np.shape(bagc)[0]):    
     feature = featimg[bagc[ii][0]-3:bagc[ii][0]+3, bagc[ii][1]-3:bagc[ii][1]+3]
     feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
     feat.append(feature1d)
-    lab.append(labelimg[bagc[ii][0], bagc[ii][1]])
+#    lab.append(labelimg[bagc[ii][0], bagc[ii][1]])
+    lab.append(2)
 
 for ii in range(np.shape(cenc)[0]):
     feature = featimg[cenc[ii][0]-3:cenc[ii][0]+3, cenc[ii][1]-3:cenc[ii][1]+3]
     feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
     feat.append(feature1d)
-    lab.append(labelimg[cenc[ii][0], cenc[ii][1]])
+#    lab.append(labelimg[cenc[ii][0], cenc[ii][1]])
+    lab.append(3)
 
 
 
 feat = np.array(feat)
 lab = np.array(lab)
 
-rforest = rf(n_estimators=200)
+rforest = rf(n_estimators=200, criterion='entropy', max_features= 0.5,max_depth=5,bootstrap=True)
+#rforest = rf(n_estimators=200, criterion='entropy', max_features='log2',max_depth=5,bootstrap=True)
+
 
 rforest.fit(feat,lab)
 
@@ -165,8 +171,8 @@ for infile in inputimgfiles:
         classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
     
     
-#    plt.imshow(classimg)
-    cv2.imwrite(outfolder+np.str(count)+'.png', np.uint8(classimg*255))
+    plt.figure(),plt.imshow(classimg)
+#    cv2.imwrite(outfolder+np.str(count+10000000000)+'.png', np.uint8(classimg*255))
     count += 1
 
     print time.time()-start
@@ -179,6 +185,10 @@ neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
 print time.time()-start
 plt.figure()
 plt.imshow(neuralout)
+
+
+
+
 #count += 1
 
 
