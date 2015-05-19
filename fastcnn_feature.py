@@ -45,10 +45,10 @@ print 'libraries loaded'
 
 start = time.time()
 
-netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2/'
+netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver3/'
 
 
-caffenet = pickle.load( open( netfolder+'neutro_conv_333.p', "rb" ) )
+caffenet = pickle.load( open( netfolder+'neutro_conv_1_2_4.p', "rb" ) )
 
 #%
 
@@ -179,12 +179,12 @@ for infile in inputimgfiles:
 
 
 #%%
-
-start = time.time()
-neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
-print time.time()-start
-plt.figure()
-plt.imshow(neuralout)
+#
+#start = time.time()
+#neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
+#print time.time()-start
+#plt.figure()
+#plt.imshow(neuralout)
 
 
 
