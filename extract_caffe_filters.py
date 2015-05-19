@@ -23,15 +23,15 @@ import pickle
 
 
 caffe.set_mode_cpu()
-net = caffe.Net(caffe_root + 'examples/neutrophiles/deploy.prototxt',
-                caffe_root + 'examples/neutrophiles/class3_iter_1000.caffemodel',
+net = caffe.Net(caffe_root + 'examples/neutrophiles/caffe_models/deploy/16_16_16.prototxt',
+                caffe_root + 'examples/neutrophiles/caffe_models/model/16_16_16_iter_10000.caffemodel',
                 caffe.TEST)
 #net = caffe.Net(caffe_root + 'examples/ecoli/neutro3classv3_deploy.prototxt',
 #                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
 #                caffe.TEST)
 
 
-outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
+outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver3/'
 
 #%%
 caffenet = {}
@@ -41,7 +41,7 @@ for ii in net.params.keys():
     
 
 
-pickle.dump( caffenet, open( outfolder +'neutro_conv_8_16_32.p', "wb" ) )
+pickle.dump( caffenet, open( outfolder +'neutro_conv_16_16_16.p', "wb" ) )
 
 
 #%%
