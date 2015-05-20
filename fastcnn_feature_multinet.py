@@ -48,7 +48,7 @@ import string
 start = time.time()
 
 #netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
-netfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
+netfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver3/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
@@ -62,14 +62,14 @@ for netcount in netfiles:
     print 'test data loading ...'
 
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver2_1000/'
+    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver3/'
     outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver2_1000/'
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    for infile in inputimgfiles:
 
 #        orimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
-    orimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+    orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
     labelimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
@@ -125,19 +125,22 @@ for netcount in netfiles:
         feature = featimg[cellc[ii][0]-3:cellc[ii][0]+3, cellc[ii][1]-3:cellc[ii][1]+3,:]
         feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
         feat.append(feature1d)
-        lab.append(labelimg[cellc[ii][0], cellc[ii][1]])
+        lab.append(1)
+#        lab.append(labelimg[cellc[ii][0], cellc[ii][1]])
     
     for ii in range(np.shape(bagc)[0]):    
         feature = featimg[bagc[ii][0]-3:bagc[ii][0]+3, bagc[ii][1]-3:bagc[ii][1]+3,:]
         feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
         feat.append(feature1d)
-        lab.append(labelimg[bagc[ii][0], bagc[ii][1]])
+        lab.append(2)        
+#        lab.append(labelimg[bagc[ii][0], bagc[ii][1]])
     
     for ii in range(np.shape(cenc)[0]):
         feature = featimg[cenc[ii][0]-3:cenc[ii][0]+3, cenc[ii][1]-3:cenc[ii][1]+3,:]
         feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
         feat.append(feature1d)
-        lab.append(labelimg[cenc[ii][0], cenc[ii][1]])
+        lab.append(3)        
+#        lab.append(labelimg[cenc[ii][0], cenc[ii][1]])
     
     
     
@@ -179,9 +182,9 @@ for netcount in netfiles:
     #    plt.imshow(classimg)
         cv2.imwrite(outfolder+savename+'.tif', np.uint8(classimg*255))
 #        count += 1
-        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
+#        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
         
-        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
+#        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
 
         print time.time()-start
 

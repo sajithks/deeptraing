@@ -94,7 +94,7 @@ caffe.set_mode_gpu()
 for netcount in range(np.shape(modelfiles)[0]):
 
     net = caffe.Net( deployfiles[netcount],modelfiles[netcount], caffe.TEST)
-#    print netcount,' ',net.params.keys()
+    print netcount,' ',net.params.keys()
 #%%
 #net = caffe.Net(caffe_root + 'examples/ecoli/ecolifile2deploy.prototxt',
 #                caffe_root + 'examples/ecoli/file8bit2_iter_10000.caffemodel',
@@ -103,7 +103,7 @@ for netcount in range(np.shape(modelfiles)[0]):
 #                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
 #                caffe.TEST)
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver2/'
+    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver3/'
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    inputimgfiles = inputimgfiles[0:2]
     
@@ -130,7 +130,7 @@ for netcount in range(np.shape(modelfiles)[0]):
         #a = []
         step = 4
         for ii in np.arange(40,inimg.shape[1]-40,step):
-            st = time.time()
+#            st = time.time()
             a = []
             count = ii
             for kk in range(step):
@@ -146,6 +146,6 @@ for netcount in range(np.shape(modelfiles)[0]):
         savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]
 
         cv2.imwrite(outfolder+savename+'.tif',np.uint8(outimg*255))
-        print time.time()-st
+#        print time.time()-st
         print savename,' classification done!'
 #        filecount += 1
