@@ -139,7 +139,7 @@ for netcount in range(np.shape(modelfiles)[0]):
                 count += 1
             
             outimg[ii:ii+step, 40:orimg.shape[1]-40,:] = net.forward_all(data=np.array(a))['prob'].reshape((step,np.shape(a)[0]/step,3 ))            
-#            print ii, '  ', time.time()-st
+            print ii, '  ', time.time()-st
         
     #    plt.imshow(outimg)
         savename = string.split(string.split(modelfiles[netcount],'/')[-1], '.')[0]

@@ -191,12 +191,15 @@ for netcount in netfiles:
 
 #%%
 
-#start = time.time()
-#neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
-#print time.time()-start
-#plt.figure()
-#plt.imshow(neuralout)
-#count += 1
+start = time.time()
+neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
+print time.time()-start
+plt.figure()
+plt.imshow(neuralout)
+
+
+
+count += 1
 
 
 
