@@ -130,7 +130,7 @@ for netcount in range(np.shape(modelfiles)[0]):
         #a = []
         step = 4
         for ii in np.arange(40,inimg.shape[1]-40,step):
-#            st = time.time()
+            st = time.time()
             a = []
             count = ii
             for kk in range(step):
