@@ -61,7 +61,7 @@ inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 inputimgfiles = inputimgfiles[0:2]
 #for infile in inputimgfiles:
 
-orimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
+orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 labelimg = cv2.imread('/Users/sajithks/Documents/deeptraing/data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
 

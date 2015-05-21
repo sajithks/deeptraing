@@ -17,6 +17,7 @@ sys.path.append('/Users/sajithks/Documents/project_cell_tracking/phase images fr
 
 import createbacteria  as cb
 import numpy as np
+import scipy as sp
 from matplotlib import pyplot as plt
 from matplotlib.legend_handler import HandlerLine2D
 import cv2
@@ -47,27 +48,56 @@ plt.rc('font', **font)
 
 gtfolder = '/Users/sajithks/Documents/dump/data_neutrophils/ilastik/'
 
-testimgfolder = '/Users/sajithks/Documents/dump/data_neutrophils/output/neuralnet_caffedirect/ver2/'
-#% micro phase dataset
+rffolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/ver3/'
+neuralfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver3/'
+#% gt
 startime = time.time()
 gt = cv2.imread(gtfolder+'Labels00.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-gt = (gt==2)*1+(gt==1)*1
 
-testseg = cv2.imread(testimgfolder+'222_iter_1000_Aligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
-segimg = (~(testseg.argmin(2)==0))*1
+mask = gt==1
+seed, ncc = label(gt==2,np.ones((3,3)))
+gtlabel = cb.watershedSeeded(np.ones(gt.shape), mask, seed)
+#gtlabel[gtlabel==-1]=0
+#gtlabel[gtlabel==1]=0
 
-segimglab, nccseg = label(segimg,np.ones((3,3)))
 
+
+
+rfseg = cv2.imread(rffolder+'neutro_conv_1_2_4_Aligned0000.tif',cv2.CV_LOAD_IMAGE_UNCHANGED)
+rfseg = rfseg[6:rfseg.shape[0]-6, 6:rfseg.shape[1]-6, :]
+
+segimg = np.argmax(rfseg, 2)
+segimglab, segncc = label( segimg==0, np.ones((3,3)) )
+segseed = (segimg==2)*1
+segseed = segseed*(sp.ndimage.binary_fill_holes(segimg==0)>0)
+
+#for ii in np.arange(1, segncc,1):
+#    if( (np.sum((1*(segimglab == ii) )*segseed) == 0) ):
+#        segimglab[segimglab==ii] = 0
+#        
+
+segimglab = cb.removeBoundaryLabel(segimglab)
+#segseed = segseed*segimglab>0
+    
+segmask = (segimglab>1)*1
+
+segseed, ncc = label(segseed, np.ones((3,3)))
+#segseed = cb.removeBoundaryLabel(segseed)
+
+segimglab = cb.watershedSeeded(np.ones(segmask.shape), segmask, segseed)
+
+#segimglab[segimglab==-1]=0
+#segimglab[segimglab==1]=0
 
 rowdiff = gt.shape[0]-segimg.shape[0]
 coldiff = gt.shape[1]-segimg.shape[1]
-gt = gt[rowdiff/2:(gt.shape[0]-rowdiff/2), coldiff/2:(gt.shape[1]-coldiff/2)]
-gtlab, nccgt = label(gt,np.ones((3,3)))
+gtlabel = gtlabel[rowdiff/2:(gt.shape[0]-rowdiff/2), coldiff/2:(gt.shape[1]-coldiff/2)]
+#gtlab, nccgt = label(gt,np.ones((3,3)))
 
-gtlab = cb.labelDilation(gtlab,19)
+gtlabel = cb.labelDilation(gtlabel,7)
 
-#%
-recall, precision, fmeasure, dicescore = cb.evaluateSegmentation2(gtlab, segimglab)
+#%%
+recall, precision, fmeasure, dicescore = cb.evaluateSegmentation2(gtlabel, segimglab)
 #print recall[1],precision[1], fmeasure[1]
 bincount = 100
 ft1 = fthreshValue(fmeasure, bincount)
@@ -83,7 +113,7 @@ line1, = plt.plot(xval, ft1, label='CBA',color = 'k',linewidth = LINEWIDTH)
 
 
 #%%
-a1 = cb.findAreaDistribution(gtlab)
+a1 = cb.findAreaDistribution(gtlabel)
 a2 = cb.findAreaDistribution(segimglab)
 #a3 = cb.findAreaDistribution(cbafilt)
 #a4 = cb.findAreaDistribution(cbasmooth)
