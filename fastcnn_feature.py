@@ -39,26 +39,26 @@ from sklearn import svm
 from multiprocessing import Pool
 import itertools 
 print 'libraries loaded'
-
+import string
 
 #%
 
 start = time.time()
 
-netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver3/'
+netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/'
 
 
-caffenet = pickle.load( open( netfolder+'neutro_conv_1_2_4.p', "rb" ) )
+caffenet = pickle.load( open( netfolder+'neutro_conv_111.p', "rb" ) )
 
 #%
 
 print 'test data loading ...'
 
-imgfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/sampimg/'
-outfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/conv_222/'
+imgfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/img/'
+outfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/ver3_2_4_8_full/'
 
 inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
-inputimgfiles = inputimgfiles[0:2]
+#inputimgfiles = inputimgfiles[0:2]
 #for infile in inputimgfiles:
 
 orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
@@ -171,9 +171,9 @@ for infile in inputimgfiles:
         classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
     
     
-    plt.figure(),plt.imshow(classimg)
-#    cv2.imwrite(outfolder+np.str(count+10000000000)+'.png', np.uint8(classimg*255))
-    count += 1
+#    plt.figure(),plt.imshow(classimg)
+    cv2.imwrite(outfolder+string.split(infile,'/')[-1], np.uint8(classimg*255))
+#    count += 1
 
     print time.time()-start
 

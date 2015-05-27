@@ -131,7 +131,7 @@ for ii in range(np.shape(rftrainfiles)[0]):
 #    line2, = plt.plot(xval, ftneural, label='neural',color = 'b',linewidth = LINEWIDTH)
 
 
-# testset performance
+#%% testset performance
 
 rftest = []
 ntest = []
@@ -154,7 +154,7 @@ for ii in range(np.shape(rftestfiles)[0]):
     
     gttrainlab = cb.labelDilation(gttrainlab, 2)
     
-    #%%
+    #%
     recall1, precision1, fmeasure1, dicescore1 = cb.evaluateSegmentation2(gttestlab, rfseglab)
     recall2, precision2, fmeasure2, dicescore2 = cb.evaluateSegmentation2(gttestlab, neuralseglab)
     
@@ -168,11 +168,11 @@ for ii in range(np.shape(rftestfiles)[0]):
     xval = np.linspace(0, 1, bincount)
     
     
-#    plt.figure()#, plt.plot(xval, ft1, label='outimg','')#, xval, ft2, 'b', xval, ft3, 'r', xval, ft4, 'g'),plt.title('F-score Elf phase'),plt.legend(('line1','line2','line3','line4'),('outimg','filterout','smoothout','microbetracker')),plt.show()
-#    line1, = plt.plot(xval, ftrf, label='randomforest',color = 'k',linewidth = LINEWIDTH)
-#    line2, = plt.plot(xval, ftneural, label='neural',color = 'b',linewidth = LINEWIDTH)
+    plt.figure()#, plt.plot(xval, ft1, label='outimg','')#, xval, ft2, 'b', xval, ft3, 'r', xval, ft4, 'g'),plt.title('F-score Elf phase'),plt.legend(('line1','line2','line3','line4'),('outimg','filterout','smoothout','microbetracker')),plt.show()
+    line1, = plt.plot(xval, ftrf, label='randomforest',color = 'k',linewidth = LINEWIDTH)
+    line2, = plt.plot(xval, ftneural, label='neural',color = 'b',linewidth = LINEWIDTH)
 
-
+#%%
 rftrain = np.array(rftrain)
 ntrain = np.array(ntrain)
 
