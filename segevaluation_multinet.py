@@ -76,28 +76,29 @@ plt.rc('font', **font)
 
 
 
-gtfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/labels/fulllabels/'
+gtfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/labels/fulllabels/'
 
 #neural net
-neuralfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver4/'
+neuralfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver4/'
 #neuraltrainfiles = sorted(glob.glob(neuralfolder + '*Aligned0000.tif'))
 #neuraltestfiles = sorted(glob.glob(neuralfolder + '*Aligned0010.tif'))
 
 #random forest
-rffolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver4/'
+rffolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/randomforest/ver4/'
 #rftrainfiles = sorted(glob.glob(rffolder + '*1_2_4*Aligned0000.png'))
 #rftestfiles = sorted(glob.glob(rffolder + '*1_2_4*Aligned0010*'))
-
+plotloc = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/plots/ver4/'
+ 
 #% ground truth
 startime = time.time()
-network = '1_2_4'
+network = '16_16_16'
 
-imagename = 'Aligned0010'
+imagename = 'Aligned0060'
 
 #gttrain = cv2.imread(gtfolder+'Aligned0000.png',cv2.CV_LOAD_IMAGE_UNCHANGED)
-gttest = cv2.imread(glob.glob(gtfolder +'*'+imagename+'*'),cv2.CV_LOAD_IMAGE_UNCHANGED)
-rfseg = cv2.imread(glob.glob(rffolder + '*'+network+'*'+imagename+'*'),cv2.CV_LOAD_IMAGE_UNCHANGED)
-neuralseg = cv2.imread(glob.glob(neuralfolder + '*'+network+'*'+imagename+'*'),cv2.CV_LOAD_IMAGE_UNCHANGED)
+gttest = cv2.imread(glob.glob(gtfolder +'*'+imagename+'*')[0],cv2.CV_LOAD_IMAGE_UNCHANGED)
+rfseg = cv2.imread(glob.glob(rffolder + '*'+network+'*'+imagename+'*')[0],cv2.CV_LOAD_IMAGE_UNCHANGED)
+neuralseg = cv2.imread(glob.glob(neuralfolder + '*'+network+'*'+imagename+'*')[0],cv2.CV_LOAD_IMAGE_UNCHANGED)
 #gttrainlab = labelgt(gttrain)
 gttestlab = labelgt(gttest)
 
@@ -182,6 +183,8 @@ xval = np.linspace(0, 1, bincount)
 plt.figure()#, plt.plot(xval, ft1, label='outimg','')#, xval, ft2, 'b', xval, ft3, 'r', xval, ft4, 'g'),plt.title('F-score Elf phase'),plt.legend(('line1','line2','line3','line4'),('outimg','filterout','smoothout','microbetracker')),plt.show()
 line1, = plt.plot(xval, ftrf, label='randomforest',color = 'k',linewidth = LINEWIDTH)
 line2, = plt.plot(xval, ftneural, label='neural',color = 'b',linewidth = LINEWIDTH)
+plt.legend(handler_map={line1: HandlerLine2D(numpoints=40)},loc='lower left')
+plt.savefig(plotloc+network+imagename+'.png',bbox_inches='tight')
 
 #%%
 #rftrain = np.array(rftrain)
@@ -199,7 +202,6 @@ line2, = plt.plot(xval, ftneural, label='neural',color = 'b',linewidth = LINEWID
 #line1, = plt.plot(range(rftrain.shape[0]), rftrain, label='rf', color='k')
 #line2, = plt.plot(range(ntrain.shape[0]), ntrain, label='neural', color = 'b')
 #plt.xlabel('network model ', fontsize=20),plt.ylabel('Area under cumulative fscore', fontsize=20)
-#plt.legend(handler_map={line1: HandlerLine2D(numpoints=40)},loc='lower left')
 ##plt.show()
 #frame=plt.gca()
 ##plt.yticks(np.arange(0, 1.25, .25),np.arange(0, 125, 25))
