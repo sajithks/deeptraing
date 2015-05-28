@@ -62,7 +62,7 @@ for netcount in netfiles:
     print 'test data loading ...'
 
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver3/'
+    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver4/'
     outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver4/'
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
@@ -161,45 +161,65 @@ for netcount in netfiles:
         testimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
     #    testimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
         
-#        featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
-#        
-#        classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
-#        
-#        for ii in np.arange(3, featimg.shape[0]-3,1):
-#        #    print ii
-#            groupfeat = []
-#            for jj in np.arange(3, featimg.shape[1]-3,1):
-#                
-#                feature = featimg[ii-3:ii+3, jj-3:jj+3,:]
-#                feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
-#                groupfeat.append(feature1d)
-#                
-#            classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
+        featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
+        
+        classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
+        
+        for ii in np.arange(3, featimg.shape[0]-3,1):
+        #    print ii
+            groupfeat = []
+            for jj in np.arange(3, featimg.shape[1]-3,1):
+                
+                feature = featimg[ii-3:ii+3, jj-3:jj+3,:]
+                feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
+                groupfeat.append(feature1d)
+                
+            classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
         
         savename = string.split(string.split(netcount,'/')[-1], '.')[0]
         savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]
 
     #    plt.imshow(classimg)
-#        cv2.imwrite(outfolder+savename+'.tif', np.uint8(classimg*255))
+        cv2.imwrite(outfolder+savename+'.png', np.uint8(classimg*255))
 #        count += 1
-        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
+#        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
         
-        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
+#        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
 
         print time.time()-start
 
 
 #%%
+#for netcount in netfiles:
+#    
+#    caffenet = pickle.load( open( netcount, "rb" ) )
+##caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
+#
+##%
+#    for infile in inputimgfiles:
+#    
+#        start = time.time()
+#        testimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
+#
+#        print 'test data loading ...'
+#    
+#        imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
+#        outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver3/'
+#        outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver4/'
+#    
+#        inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
+#    
+#        start = time.time()
+#        neuralout = fcnn.classifyFcnnFeature(testimg, caffenet)
+#        savename = string.split(string.split(netcount,'/')[-1], '.')[0]
+#        savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]
+#            
+#        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
+#
+#        print time.time()-start
 
-start = time.time()
-neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
-print time.time()-start
-plt.figure()
-plt.imshow(neuralout)
 
-
-
-count += 1
+#count += 1
 
 
 
