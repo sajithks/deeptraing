@@ -55,10 +55,10 @@ print 'reading file names ...'
 #datafolder = '/home/saj/Documents/cbalinux/deeplearning/programs/data_neutrophils/labels/'
 datafolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/'
 rawimgfiles = sorted(glob.glob(datafolder +'sampimg/' + '*.tif'))
-labelfiles = sorted(glob.glob(datafolder +'ilastik/' + '*.tif'))
+labelfiles = sorted(glob.glob(datafolder +'labels/fulllabels/' + '*.png'))[0:2]
 print 'file name read'
 
-# clear temporary locations of training and test data
+#%% clear temporary locations of training and test data
 
 print ' clearing training and testing data ... '
 if(os.system('rm -rf '+traindataloc) ==0):print 'traindataloc removed'

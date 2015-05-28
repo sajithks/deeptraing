@@ -31,7 +31,7 @@ net = caffe.Net(caffe_root + 'examples/neutrophiles/caffe_models/deploy/16_16_16
 #                caffe.TEST)
 
 
-outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver3/'
+outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver4/'
 
 #%%
 caffenet = {}

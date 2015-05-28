@@ -77,7 +77,7 @@ def fastMaxpool(inimg):
 
     return(outimg)
 
-#% 
+#%% 
 #print 'network training done'
 ###############################################################################
 modelfolder = '/home/saj/Downloads/caffe-master/examples/neutrophiles/caffe_models/model/'
@@ -89,9 +89,10 @@ deployfiles = sorted(glob.glob(deployfolder + '*.prototxt'))
 
 #%
 
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 
-for netcount in range(np.shape(modelfiles)[0]):
+for netcount in np.arange(np.shape(modelfiles)[0]-3,np.shape(modelfiles)[0],1):
+#for netcount in range(np.shape(modelfiles)[0]):
 
     net = caffe.Net( deployfiles[netcount],modelfiles[netcount], caffe.TEST)
     print netcount,' ',net.params.keys()
@@ -103,7 +104,7 @@ for netcount in range(np.shape(modelfiles)[0]):
 #                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
 #                caffe.TEST)
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver3/'
+    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver4/'
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    inputimgfiles = inputimgfiles[0:2]
     
@@ -145,7 +146,8 @@ for netcount in range(np.shape(modelfiles)[0]):
         savename = string.split(string.split(modelfiles[netcount],'/')[-1], '.')[0]
         savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]
 
-        cv2.imwrite(outfolder+savename+'.tif',np.uint8(outimg*255))
+        cv2.imwrite(outfolder+savename+'.png',np.uint8(outimg*255))
 #        print time.time()-st
         print savename,' classification done!'
 #        filecount += 1
+print 'netcount ',netcount

@@ -48,7 +48,7 @@ import string
 start = time.time()
 
 #netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
-netfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver3/'
+netfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver4/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
@@ -63,7 +63,7 @@ for netcount in netfiles:
 
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
     outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver3/'
-    outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver2_1000/'
+    outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver4/'
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    for infile in inputimgfiles:
@@ -161,30 +161,30 @@ for netcount in netfiles:
         testimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
     #    testimg = cv2.imread(inputimgfiles[1], cv2.CV_LOAD_IMAGE_UNCHANGED)
         
-        featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
-        
-        classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
-        
-        for ii in np.arange(3, featimg.shape[0]-3,1):
-        #    print ii
-            groupfeat = []
-            for jj in np.arange(3, featimg.shape[1]-3,1):
-                
-                feature = featimg[ii-3:ii+3, jj-3:jj+3,:]
-                feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
-                groupfeat.append(feature1d)
-                
-            classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
+#        featimg, maxoutl3 = fcnn.extractFcnnFeature(testimg, caffenet)
+#        
+#        classimg = np.zeros((featimg.shape[0],featimg.shape[1],3))
+#        
+#        for ii in np.arange(3, featimg.shape[0]-3,1):
+#        #    print ii
+#            groupfeat = []
+#            for jj in np.arange(3, featimg.shape[1]-3,1):
+#                
+#                feature = featimg[ii-3:ii+3, jj-3:jj+3,:]
+#                feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
+#                groupfeat.append(feature1d)
+#                
+#            classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
         
         savename = string.split(string.split(netcount,'/')[-1], '.')[0]
         savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]
 
     #    plt.imshow(classimg)
-        cv2.imwrite(outfolder+savename+'.tif', np.uint8(classimg*255))
+#        cv2.imwrite(outfolder+savename+'.tif', np.uint8(classimg*255))
 #        count += 1
-#        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
+        neuralout = fcnn.classifyFcnnFeature(orimg, caffenet)
         
-#        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
+        cv2.imwrite(outfolder2+savename+'.tif', np.uint8(neuralout*255))
 
         print time.time()-start
 

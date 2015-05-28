@@ -321,9 +321,9 @@ def classifyFcnnFeature(orimg, caffenet):
                         feat1d.append(featimg[:,row-3:row+3,col-3:col+3].reshape((featimg.shape[0]*36),order='C'))
                         
                 inner1 = (np.inner(feat1d,ip1_filt)+ip1_bias)#ip1
-                inner1 = inner1*(inner1>0)#relu
+#                inner1 = inner1*(inner1>0)#relu
                 inner2 = (np.inner(inner1,ip2_filt)+ip2_bias)
-                inner2 = inner2*(inner2>0)
+#                inner2 = inner2*(inner2>0)
                 inner3 = (np.inner(inner2,ip3_filt)+ip3_bias)
 #                        a = (np.inner(feat1d,ip1_filt)+ip1_bias)#/(np.sum(np.inner(feat1d,ipfilt) +bias))            
                     #softmax    
