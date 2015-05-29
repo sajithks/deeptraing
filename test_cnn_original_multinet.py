@@ -89,7 +89,7 @@ deployfiles = sorted(glob.glob(deployfolder + '*.prototxt'))
 
 #%
 
-caffe.set_mode_cpu()
+caffe.set_mode_gpu()
 
 for netcount in np.arange(np.shape(modelfiles)[0]-3,np.shape(modelfiles)[0],1):
 #for netcount in range(np.shape(modelfiles)[0]):
