@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat May 30 16:24:28 2015
+
+@author: root
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu May 28 13:24:26 2015
 
 @author: saj
@@ -108,7 +115,7 @@ for netcount in range(np.shape(testfiles)[0] ):
     
     # count here
     colorval = ['b','g','r','c','m','k']
-    plt.figure()
+#    plt.figure()
     rftest = []
     ntest = []
     for imgcount in range(np.shape(nntestfiles)[0]):
@@ -121,7 +128,7 @@ for netcount in range(np.shape(testfiles)[0] ):
         rfseg = cv2.imread(glob.glob(rffolder + '*'+network+'*'+imagename+'*')[0],cv2.CV_LOAD_IMAGE_UNCHANGED)
         neuralseg = cv2.imread(glob.glob(neuralfolder + '*'+network+'*'+imagename+'*')[0],cv2.CV_LOAD_IMAGE_UNCHANGED)
         #gttrainlab = labelgt(gttrain)
-        gttestlab = labelgt(gttest)
+        gttestlab = ((gttest==1)+(gttest==2))*1
         
         
         #%% testset performance
@@ -135,8 +142,13 @@ for netcount in range(np.shape(testfiles)[0] ):
 #        neuralseg = cv2.imread(nntestfiles[ii], cv2.CV_LOAD_IMAGE_UNCHANGED)
         neuralseg = neuralseg[40:neuralseg.shape[0]-40, 40+104:neuralseg.shape[1]-40-104, :]
         
-        rfseglab = labelSegimg(rfseg)
-        neuralseglab = labelSegimg(neuralseg)
+#        rfseglab = labelSegimg(rfseg)
+        rfseglab = np.argmax(rfseg,2)
+        rfseglab = ((rfseglab==2) + (rfseglab==0) )*1
+
+#        neuralseglab = labelSegimg(neuralseg)
+        neuralseglab = np.argmax(neuralseg,2)
+        neuralseglab = ((neuralseglab==2) + (neuralseglab==0) )*1
         
         rowdiff = gttestlab.shape[0]-rfseg.shape[0]
         coldiff = gttestlab.shape[1]-rfseg.shape[1]
@@ -160,12 +172,12 @@ for netcount in range(np.shape(testfiles)[0] ):
         
         
         #, plt.plot(xval, ft1, label='outimg','')#, xval, ft2, 'b', xval, ft3, 'r', xval, ft4, 'g'),plt.title('F-score Elf phase'),plt.legend(('line1','line2','line3','line4'),('outimg','filterout','smoothout','microbetracker')),plt.show()
-        line1, = plt.plot(xval, ftrf, label='randomforest',color = colorval[imgcount], linestyle = '--', linewidth = LINEWIDTH)
-        line2, = plt.plot(xval, ftneural, label='neural',color = colorval[imgcount], linestyle = '-', linewidth = LINEWIDTH)
+#        line1, = plt.plot(xval, ftrf, label='randomforest',color = colorval[imgcount], linestyle = '--', linewidth = LINEWIDTH)
+#        line2, = plt.plot(xval, ftneural, label='neural',color = colorval[imgcount], linestyle = '-', linewidth = LINEWIDTH)
     #%%
-    axes = plt.gca()
-    axes.set_ylim([0,1])
-    plt.savefig(plotloc+network+'fscore.png',bbox_inches='tight',dpi=300)
+#    axes = plt.gca()
+#    axes.set_ylim([0,1])
+#    plt.savefig(plotloc+network+'fscore.png',bbox_inches='tight',dpi=300)
     
     rftest = np.array(rftest)
     ntest = np.array(ntest)
