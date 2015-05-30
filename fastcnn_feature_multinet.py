@@ -30,7 +30,7 @@ import subprocess
 #import Image
 import sys
 sys.path.append('/Users/sajithks/Documents/deep/deeptraing')
-#sys.path.append('/home/saj/Documents/deep/deeptraing')
+sys.path.append('/home/saj/Documents/deep/deeptraing')
 
 import fcnn
 import time
@@ -45,8 +45,8 @@ print 'libraries loaded'
 import string
 
 #%
-basefolder = '/Users/sajithks/Documents/deep/deeptraing/'
-#basefolder = '/home/saj/Documents/deep/deeptraing/'
+#basefolder = '/Users/sajithks/Documents/deep/deeptraing/'
+basefolder = '/home/saj/Documents/deep/deeptraing/'
 
 start = time.time()
 
@@ -55,7 +55,7 @@ netfolder = basefolder+'data_neutrophils/caffe_net/ver4/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
-for netcount in netfiles:
+for netcount in netfiles[1::2]:
     
     caffenet = pickle.load( open( netcount, "rb" ) )
 #caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
