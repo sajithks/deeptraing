@@ -94,7 +94,7 @@ def extractFcnnFeature(orimg, caffenet):
     '''
     orimg = np.float32(orimg)
     orimg = orimg - orimg.min()
-    orimg = orimg/orimg.max()
+    orimg = 255*orimg/orimg.max()
     
     outimg = np.zeros((orimg.shape[0],orimg.shape[1],3))
     
@@ -199,7 +199,7 @@ def classifyFcnnFeature(orimg, caffenet):
     '''
     orimg = np.float32(orimg)
     orimg = orimg - orimg.min()
-    orimg = orimg/orimg.max()
+    orimg = 255*orimg/orimg.max()
     
     outimg = np.zeros((orimg.shape[0],orimg.shape[1],3))
     
@@ -224,6 +224,7 @@ def classifyFcnnFeature(orimg, caffenet):
     for ii in range(filt.shape[0]):
         a1[ii] = a1[ii] +bias[ii]
         
+    
     
     maxoutl1 = fastMaxPool(a1)
     

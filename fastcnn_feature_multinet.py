@@ -29,8 +29,9 @@ import glob
 import subprocess
 #import Image
 import sys
-sys.path.append('/Users/sajithks/Documents/deep/deeptraing/')
-sys.path.append('/home/saj/Documents/deep/deeptraing/')
+sys.path.append('/Users/sajithks/Documents/deep/deeptraing')
+#sys.path.append('/home/saj/Documents/deep/deeptraing')
+
 import fcnn
 import time
 import sklearn
@@ -44,11 +45,13 @@ print 'libraries loaded'
 import string
 
 #%
+basefolder = '/Users/sajithks/Documents/deep/deeptraing/'
+#basefolder = '/home/saj/Documents/deep/deeptraing/'
 
 start = time.time()
 
 #netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
-netfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/caffe_net/ver4/'
+netfolder = basefolder+'data_neutrophils/caffe_net/ver4/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
@@ -61,17 +64,17 @@ for netcount in netfiles:
 
     print 'test data loading ...'
 
-    imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/randomforest/ver4/'
-    outfolder2 = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet/ver4/'
+    imgfolder = basefolder+'data_neutrophils/sampimg/'
+    outfolder = basefolder+'data_neutrophils/output/randomforest/ver4/'
+    outfolder2 = basefolder+'data_neutrophils/output/neuralnet/ver4/'
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    for infile in inputimgfiles:
 
 #        orimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
     orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
-
-    labelimg = cv2.imread('/home/saj/Documents/deep/deeptraing/data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
+    
+    labelimg = cv2.imread(basefolder+'data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 #    plt.imshow(outfeatimg[:,:,1])
 
