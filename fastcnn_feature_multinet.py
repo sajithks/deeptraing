@@ -74,7 +74,7 @@ for netcount in netfiles[1::2]:
 #        orimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
     orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
     
-    labelimg = cv2.imread(basefolder+'data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
+    labelimg = cv2.imread(basefolder+'data_neutrophils/labels/fulllabels/Aligned0000.png', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 #    plt.imshow(outfeatimg[:,:,1])
 
