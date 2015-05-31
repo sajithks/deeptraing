@@ -55,7 +55,7 @@ netfolder = basefolder+'data_neutrophils/caffe_net/ver4/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
-for netcount in netfiles[1::2]:
+for netcount in netfiles[0::2]:
     
     caffenet = pickle.load( open( netcount, "rb" ) )
 #caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
@@ -74,7 +74,7 @@ for netcount in netfiles[1::2]:
 #        orimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
     orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
     
-    labelimg = cv2.imread(basefolder+'data_neutrophils/ilastik/Labels00.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
+    labelimg = cv2.imread(basefolder+'data_neutrophils/labels/fulllabels/Aligned0000.png', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
 #    plt.imshow(outfeatimg[:,:,1])
 
@@ -150,8 +150,9 @@ for netcount in netfiles[1::2]:
     feat = np.array(feat)
     lab = np.array(lab)
     
-    rforest = rf(n_estimators=200)
-    
+#    rforest = rf(n_estimators=200)
+    rforest = rf(n_estimators=200, criterion='entropy', max_features= 0.5,max_depth=5,bootstrap=True)
+
     rforest.fit(feat,lab)
 
 
