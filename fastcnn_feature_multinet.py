@@ -15,8 +15,8 @@ import time
 #import sys
 import os
 import matplotlib.pyplot as plt
-#sys.path.append('/Users/sajithks/Documents/project_cell_tracking/phase images from elf')
-#sys.path.append('/Users/sajithks/Documents/project_cell_tracking/phase images from elf/ecoli_det_seg')
+sys.path.append('/Users/sajithks/Documents/project_cell_tracking/phase images from elf')
+sys.path.append('/Users/sajithks/Documents/project_cell_tracking/phase images from elf/ecoli_det_seg')
 #import createbacteria  as cb
 import numpy as np
 #from matplotlib import pyplot as plt
@@ -45,8 +45,9 @@ print 'libraries loaded'
 import string
 
 #%
-#basefolder = '/Users/sajithks/Documents/deep/deeptraing/'
-basefolder = '/home/saj/Documents/deep/deeptraing/'
+basefolder = '/Users/sajithks/Documents/deeptraing/'
+
+#basefolder = '/home/saj/Documents/deep/deeptraing/'
 
 start = time.time()
 
@@ -55,7 +56,7 @@ netfolder = basefolder+'data_neutrophils/caffe_net/ver4/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
-for netcount in netfiles[0::2]:
+for netcount in netfiles[3::4]:
     
     caffenet = pickle.load( open( netcount, "rb" ) )
 #caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
@@ -66,7 +67,10 @@ for netcount in netfiles[0::2]:
 
     imgfolder = basefolder+'data_neutrophils/sampimg/'
     outfolder = basefolder+'data_neutrophils/output/randomforest/ver4/'
-    outfolder2 = basefolder+'data_neutrophils/output/neuralnet/ver4/'
+#    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5_log2/'
+#    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5_sqrt/'
+
+    
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    for infile in inputimgfiles:
@@ -152,6 +156,8 @@ for netcount in netfiles[0::2]:
     
 #    rforest = rf(n_estimators=200)
     rforest = rf(n_estimators=200, criterion='entropy', max_features= 0.5,max_depth=5,bootstrap=True)
+#    rforest = rf(n_estimators=10, criterion='gini', max_features= 10, max_depth=2,bootstrap=True)
+#    rforest = rf(n_estimators=200, criterion='entropy', max_features= 'log2',max_depth=5,bootstrap=True)
 
     rforest.fit(feat,lab)
 

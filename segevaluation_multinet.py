@@ -85,6 +85,8 @@ neuralfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/output/neu
 testfiles = sorted(glob.glob(neuralfolder + '*Aligned0010*'))
 
 #count here
+rftestcumul = []
+nntestcumul = []
 for netcount in range(np.shape(testfiles)[0] ):
 
     network = string.split(string.split(string.split(testfiles[netcount],'/')[-1], '.')[0],'iter' )[0]
@@ -165,6 +167,8 @@ for netcount in range(np.shape(testfiles)[0] ):
     #%%
     axes = plt.gca()
     axes.set_ylim([0,1])
+    plt.xlabel(network, fontsize=20),plt.ylabel('Cumulative fscore', fontsize=20)
+
     plt.savefig(plotloc+network+'fscore.png',bbox_inches='tight',dpi=300)
     
     rftest = np.array(rftest)
@@ -189,12 +193,48 @@ for netcount in range(np.shape(testfiles)[0] ):
     plt.tick_params(axis='both', which='major', labelsize=15)
     
     
-    plt.savefig(plotloc+network+'fscorearea.png',bbox_inches='tight',dpi=300)
+#    plt.savefig(plotloc+network+'fscorearea.png',bbox_inches='tight',dpi=300)
+
+    rftest = np.array(rftest)
+    ntest = np.array(ntest)
+    
+    rftestcumul.append(rftest)
+    nntestcumul.append(ntest)
 
 
+
+
+    
+#%%
+netnames = []
+for netcount in range(np.shape(testfiles)[0] ):
+    netnames.append( string.split(string.split(string.split(testfiles[netcount],'/')[-1], '.')[0],'_iter' )[0])
+    
+rftestcumul = np.array(rftestcumul)
+nntestcumul = np.array(nntestcumul)
+xval = np.array(range(rftestcumul.shape[0]))
+
+fig, ax = plt.subplots()
+
+colorval = ['b','g','r','c','m','y']
+
+scaling = 0
+width = 0.04
+for ii in range(nntestcumul.shape[1]):     
+
+    line1 = ax.bar(xval+scaling, rftestcumul[:,ii] , width, color = colorval[ii],hatch="*")
+    scaling += 0.07
+for ii in range(nntestcumul.shape[1]):     
+ 
+    line2 = ax.bar(xval+scaling, nntestcumul[:,ii] , width, color = colorval[ii],edgecolor='None')
+    scaling += 0.07 
+plt.tick_params(axis ='both',which='major',labelsize=10)
+plt.xticks(xval+.5,netnames)
+plt.xlabel('Network ', fontsize=20),plt.ylabel('Area under cumulative fscore', fontsize=20)
+
+plt.savefig(plotloc+'cumulfscoreall.png',bbox_inches='tight',dpi=600)
 plt.close('all')
 #%%
-
 #ma,mi,sa,mva=cp.findCriticalPoints(rfseg[:,:,2],10.)
 #
 #simg = np.zeros_like(rfseg[:,:,2])
