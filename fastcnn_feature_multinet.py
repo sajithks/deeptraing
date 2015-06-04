@@ -45,18 +45,19 @@ print 'libraries loaded'
 import string
 
 #%
-basefolder = '/Users/sajithks/Documents/deeptraing/'
+#basefolder = '/Users/sajithks/Documents/deeptraing/'
 
-#basefolder = '/home/saj/Documents/deep/deeptraing/'
+basefolder = '/home/saj/Documents/deep/deeptraing/'
 
 start = time.time()
 
 #netfolder = '/Users/sajithks/Documents/deeptraing/data_neutrophils/caffe_net/ver2_1000/'
-netfolder = basefolder+'data_neutrophils/caffe_net/ver4/'
+netfolder = basefolder+'data_neutrophils/caffe_net/ver5/'
 
 netfiles = sorted(glob.glob(netfolder+'*.p' ))
 #%%
-for netcount in netfiles[3::4]:
+#for netcount in netfiles[0::4]:
+for netcount in netfiles:
     
     caffenet = pickle.load( open( netcount, "rb" ) )
 #caffenet = pickle.load( open( netfolder+'neutro_conv_222.p', "rb" ) )
@@ -66,17 +67,17 @@ for netcount in netfiles[3::4]:
     print 'test data loading ...'
 
     imgfolder = basefolder+'data_neutrophils/sampimg/'
-    outfolder = basefolder+'data_neutrophils/output/randomforest/ver4/'
+#    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5/'
 #    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5_log2/'
-#    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5_sqrt/'
+    outfolder = basefolder+'data_neutrophils/output/randomforest/ver5_sqrt/'
 
     
 
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    for infile in inputimgfiles:
-
-#        orimg = cv2.imread(infile, cv2.CV_LOAD_IMAGE_UNCHANGED)
-    orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
+    trainimgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/trainimg/'
+    orimg = cv2.imread(trainimgfolder+'Aligned0000.tif', cv2.CV_LOAD_IMAGE_UNCHANGED)
+#    orimg = cv2.imread(inputimgfiles[0], cv2.CV_LOAD_IMAGE_UNCHANGED)
     
     labelimg = cv2.imread(basefolder+'data_neutrophils/labels/fulllabels/Aligned0000.png', cv2.CV_LOAD_IMAGE_UNCHANGED)
 
@@ -98,7 +99,7 @@ for netcount in netfiles[3::4]:
     
     bgcoord = np.argwhere(labelimg==3)
     cellcoord = np.argwhere(labelimg==1)
-    cencoord = np.argwhere(labelimg==2)
+#    cencoord = np.argwhere(labelimg==2)
     
     #%
     cellc = []
@@ -110,14 +111,14 @@ for netcount in netfiles[3::4]:
     for ii in bgcoord:
         if(ii[0]>WINDOW and ii[1]>WINDOW and ii[0]<orimg.shape[0]-WINDOW and ii[1]<orimg.shape[1]-WINDOW):
             bagc.append(ii)
-    cenc = []
-    for ii in cencoord:
-        if(ii[0]>WINDOW and ii[1]>WINDOW and ii[0]<orimg.shape[0]-WINDOW and ii[1]<orimg.shape[1]-WINDOW):
-            cenc.append(ii)
+#    cenc = []
+#    for ii in cencoord:
+#        if(ii[0]>WINDOW and ii[1]>WINDOW and ii[0]<orimg.shape[0]-WINDOW and ii[1]<orimg.shape[1]-WINDOW):
+#            cenc.append(ii)
     #%       
     shuffle(cellc)
     shuffle(bagc)
-    shuffle(cenc)
+#    shuffle(cenc)
     cellc = cellc[0:5000]
     bagc = bagc[0:5000]
     #cenc = cenc[0:5000]
@@ -142,11 +143,11 @@ for netcount in netfiles[3::4]:
         lab.append(2)        
 #        lab.append(labelimg[bagc[ii][0], bagc[ii][1]])
     
-    for ii in range(np.shape(cenc)[0]):
-        feature = featimg[cenc[ii][0]-3:cenc[ii][0]+3, cenc[ii][1]-3:cenc[ii][1]+3,:]
-        feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
-        feat.append(feature1d)
-        lab.append(3)        
+#    for ii in range(np.shape(cenc)[0]):
+#        feature = featimg[cenc[ii][0]-3:cenc[ii][0]+3, cenc[ii][1]-3:cenc[ii][1]+3,:]
+#        feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
+#        feat.append(feature1d)
+#        lab.append(3)        
 #        lab.append(labelimg[cenc[ii][0], cenc[ii][1]])
     
     
@@ -155,9 +156,9 @@ for netcount in netfiles[3::4]:
     lab = np.array(lab)
     
 #    rforest = rf(n_estimators=200)
-    rforest = rf(n_estimators=200, criterion='entropy', max_features= 0.5,max_depth=5,bootstrap=True)
+#    rforest = rf(n_estimators=200, criterion='entropy', max_features= 0.5,max_depth=5,bootstrap=True)
 #    rforest = rf(n_estimators=10, criterion='gini', max_features= 10, max_depth=2,bootstrap=True)
-#    rforest = rf(n_estimators=200, criterion='entropy', max_features= 'log2',max_depth=5,bootstrap=True)
+    rforest = rf(n_estimators=200, criterion='entropy', max_features= 'sqrt',max_depth=5,bootstrap=True)
 
     rforest.fit(feat,lab)
 
@@ -184,7 +185,7 @@ for netcount in netfiles[3::4]:
                 feature1d = feature.reshape(feature.shape[0]*feature.shape[1]*feature.shape[2])    
                 groupfeat.append(feature1d)
                 
-            classimg[ii,3:featimg.shape[1]-3,:] = rforest.predict_proba(groupfeat)
+            classimg[ii,3:featimg.shape[1]-3,0:2] = rforest.predict_proba(groupfeat)#change here based on classes
         
         savename = string.split(string.split(netcount,'/')[-1], '.')[0]
         savename = savename +'_'+ string.split(string.split(infile,'/')[-1], '.')[0]

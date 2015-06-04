@@ -91,8 +91,8 @@ deployfiles = sorted(glob.glob(deployfolder + '*.prototxt'))
 
 caffe.set_mode_gpu()
 
-#for netcount in np.arange(np.shape(modelfiles)[0]-3,np.shape(modelfiles)[0],1):
-for netcount in range(np.shape(modelfiles)[0]):
+for netcount in np.arange(0,np.shape(modelfiles)[0],1):
+#for netcount in range(np.shape(modelfiles)[0]):
 
     net = caffe.Net( deployfiles[netcount],modelfiles[netcount], caffe.TEST)
     print netcount,' ',net.params.keys()
@@ -104,7 +104,7 @@ for netcount in range(np.shape(modelfiles)[0]):
 #                caffe_root + 'examples/ecoli/neutro3clasv3_iter_10000.caffemodel',
 #                caffe.TEST)
     imgfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/sampimg/'
-    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver4/'
+    outfolder = '/home/saj/Documents/deep/deeptraing/data_neutrophils/output/neuralnet_caffedirect/ver5/'
     inputimgfiles = sorted(glob.glob(imgfolder + '*.tif'))
 #    inputimgfiles = inputimgfiles[0:2]
     
@@ -115,7 +115,7 @@ for netcount in range(np.shape(modelfiles)[0]):
 #orimg = caffe.io.load_image(inputimgfiles[1])
         orimg = caffe.io.load_image(infile)
         
-        outimg = np.zeros((orimg.shape[0],orimg.shape[1],3))
+        outimg = np.zeros((orimg.shape[0],orimg.shape[1],3)) #change here based on classes
         inimg = np.zeros((3,orimg.shape[0],orimg.shape[1]))
         inimg[0,:,:] = orimg[:,:,0]
         inimg[1,:,:] = orimg[:,:,0]
@@ -139,7 +139,7 @@ for netcount in range(np.shape(modelfiles)[0]):
                     a.append(inimg[:,count-31:count+31,jj-31:jj+31] )
                 count += 1
             
-            outimg[ii:ii+step, 40:orimg.shape[1]-40,:] = net.forward_all(data=np.array(a))['prob'].reshape((step,np.shape(a)[0]/step,3 ))            
+            outimg[ii:ii+step, 40:orimg.shape[1]-40,0:2] = net.forward_all(data=np.array(a))['prob'].reshape((step,np.shape(a)[0]/step,2 ))   #change here based on classes         
             print ii, '  ', time.time()-st
         
     #    plt.imshow(outimg)
