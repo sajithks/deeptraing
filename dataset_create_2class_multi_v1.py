@@ -123,7 +123,9 @@ for ii in cellc:
     savname = 'cell_' +np.str(cval)+'_' + np.str(ii[0]) +'_' + np.str(ii[1]) + '.png'
     savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
     cv2.imwrite(traindataloc + savname, savimg)
-    strval = traindataloc + savname + " "+ "0"
+    strval = savname + " "+ "0"
+#    strval = traindataloc + savname + " "+ "0"
+   
     strlist.append(strval)
 #bagground region
 bagccname = []
@@ -131,7 +133,9 @@ for ii in bagc:
     savname = 'bg_' + np.str(cval) + '_' + np.str(ii[0]) +'_' + np.str(ii[1]) + '.png'
     savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
     cv2.imwrite(traindataloc + savname, savimg)
-    strval = traindataloc + savname + " "+ "1"
+    strval = savname + " "+ "1"
+#    strval = traindataloc + savname + " "+ "1"
+    
     strlist.append(strval)
 #cell center region
 #labcen, ncc = label(cenimage==1, np.ones((3,3)))
@@ -214,7 +218,9 @@ for ii in cellc:
     savname = 'cell_' + np.str(cval)+'_' + np.str(ii[0]) +'_' + np.str(ii[1]) + '.png'
     savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
     cv2.imwrite(testdataloc + savname, savimg)
-    strval = testdataloc + savname + " "+ "0"
+    strval = savname + " "+ "0"
+#    strval = testdataloc + savname + " "+ "0"
+    
     strlist.append(strval)
 #bagground region
 bagccname = []
@@ -222,7 +228,9 @@ for ii in bagc:
     savname = 'bg_' + np.str(cval)+'_' + np.str(ii[0]) +'_' + np.str(ii[1]) + '.png'
     savimg = orimg[ii[0] - WIN_SIZE:ii[0] + WIN_SIZE, ii[1] - WIN_SIZE:ii[1] + WIN_SIZE]
     cv2.imwrite(testdataloc + savname, savimg)
-    strval = testdataloc + savname + " "+ "1"
+    strval = savname + " "+ "1"
+#    strval = testdataloc + savname + " "+ "1"
+    
     strlist.append(strval)
 #cell center region
 #labcen, ncc = label(cenimage==1, np.ones((3,3)))
